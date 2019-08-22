@@ -1,0 +1,12 @@
+{
+  "dest": "dist/installers",
+  "src": "packaged/add-a-chapter-linux-x64/",
+  "icon": "src/common/icon.png",
+  "categories": [
+    "Games",
+    "Utility"
+  ],
+  "lintianOverrides": [
+    "changelog-file-missing-in-native-package"
+  ]
+}

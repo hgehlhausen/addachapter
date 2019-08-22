@@ -1,0 +1,49 @@
+{
+  "name": "addachapter",
+  "version": "1.0.0",
+  "description": "Homebrewery as an electron app",
+  "main": "main/main.js",
+  "scripts": {
+    "start": "webpack && electron build/main/main.js",
+    "build:dev": "webpack",
+    "package-win": "electron-packager ./build add-a-chapter --overwrite --platform=win32 --arch=ia32 --prune=true --out=packaged --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName='add-a-chapter'",
+    "package-win-exe": "./installer-scripts/create-windows-installer.js",
+    "package-linux": "electron-packager ./build add-a-chapter --overwrite --platform=linux --arch=x64 --icon=assets/icons/png/1024x1024.png --prune=true --out=packaged",
+    "package-linux-debian": "time electron-installer-debian --src packaged/add-a-chapter-linux-x64/ --dest dist/installers/ --arch amd64 --config=debian.json"
+  },
+  "keywords": [
+    "electron",
+    "homebrewery",
+    "dnd",
+    "d&d"
+  ],
+  "author": "heath gehlhausen",
+  "license": "ISC",
+  "dependencies": {
+    "marked": "^0.7.0",
+    "monaco": "^1.201704190613.0",
+    "monaco-editor": "^0.17.1"
+  },
+  "devDependencies": {
+    "clean-webpack-plugin": "^3.0.0",
+    "css-loader": "^3.2.0",
+    "electron": "^5.0.9",
+    "electron-builder": "^21.2.0",
+    "electron-installer-debian": "^2.0.0",
+    "electron-packager": "^14.0.4",
+    "electron-winstaller": "^4.0.0",
+    "eslint": "^6.1.0",
+    "file-loader": "^4.2.0",
+    "generate-json-webpack-plugin": "^0.3.1",
+    "handlebars": "^4.1.2",
+    "handlebars-loader": "^1.7.1",
+    "html-loader": "^0.5.5",
+    "html-webpack-plugin": "^3.2.0",
+    "mini-css-extract-plugin": "^0.8.0",
+    "sass-loader": "^7.2.0",
+    "terser-webpack-plugin": "^1.4.1",
+    "url-loader": "^2.1.0",
+    "webpack": "^4.39.1",
+    "webpack-cli": "^3.3.6"
+  }
+}
