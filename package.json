@@ -3,13 +3,18 @@
   "version": "1.0.0",
   "description": "Homebrewery as an electron app",
   "main": "main/main.js",
+  "bin": {
+    "webpack": "webpack",
+    "electron-packager": "electron-packager"
+  },
   "scripts": {
     "start": "webpack && electron build/main/main.js",
-    "build:dev": "webpack",
+    "webpack-dev": "webpack && cp LICENSE build/",
     "package-win": "electron-packager ./build add-a-chapter --overwrite --platform=win32 --arch=ia32 --prune=true --out=packaged --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName='add-a-chapter'",
     "package-win-exe": "./installer-scripts/create-windows-installer.js",
     "package-linux": "electron-packager ./build add-a-chapter --overwrite --platform=linux --arch=x64 --icon=assets/icons/png/1024x1024.png --prune=true --out=packaged",
-    "package-linux-debian": "time electron-installer-debian --src packaged/add-a-chapter-linux-x64/ --dest dist/installers/ --arch amd64 --config=debian.json"
+    "package-linux-debian": "time electron-installer-debian --src packaged/add-a-chapter-linux-x64/ --dest dist/installers/ --arch amd64 --config=debian.json",
+    "pack": "electron-builder --projectDir ./build -lw"
   },
   "keywords": [
     "electron",
@@ -22,9 +27,20 @@
   "dependencies": {
     "marked": "^0.7.0",
     "monaco": "^1.201704190613.0",
-    "monaco-editor": "^0.17.1"
+    "monaco-editor": "^0.17.1",
+    "react": "^16.9.0",
+    "react-dom": "^16.9.0",
+    "react-monaco-editor": "^0.30.1",
+    "reactstrap": "^8.0.1"
   },
   "devDependencies": {
+    "@babel/core": "^7.5.5",
+    "@babel/polyfill": "^7.4.4",
+    "@babel/preset-env": "^7.5.5",
+    "@babel/preset-react": "^7.0.0",
+    "babel-loader": "^8.0.6",
+    "babel-polyfill": "^6.26.0",
+    "babel-preset-stage-0": "^6.24.1",
     "clean-webpack-plugin": "^3.0.0",
     "css-loader": "^3.2.0",
     "electron": "^5.0.9",
@@ -40,10 +56,13 @@
     "html-loader": "^0.5.5",
     "html-webpack-plugin": "^3.2.0",
     "mini-css-extract-plugin": "^0.8.0",
+    "monaco-editor-webpack-plugin": "^1.7.0",
+    "prop-types": "^15.7.2",
     "sass-loader": "^7.2.0",
     "terser-webpack-plugin": "^1.4.1",
     "url-loader": "^2.1.0",
     "webpack": "^4.39.1",
-    "webpack-cli": "^3.3.6"
+    "webpack-cli": "^3.3.6",
+    "webpack-dev-server": "^3.8.0"
   }
 }

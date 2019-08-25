@@ -1,5 +1,3 @@
-import setupEvents from '../../installer-scripts/squirrel-events';
-
 import {
   app,
   Menu,
@@ -8,10 +6,7 @@ import {
 import editorMenu from './menu';
 import EditorWindow from './editor';
 
-if (setupEvents.handleSquirrelEvent()) {
-  return;
-}
-
+// global.license = LICENSE;
 
 global.windows = new Proxy({}, {
   set(target, prop, value) {

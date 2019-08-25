@@ -5,7 +5,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const GenerateJsonWebpackPlugin = require('generate-json-webpack-plugin');
-
+const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
 // const PackageJsonPlugin = require('./webpack-plugins/package-json');
 
 const packageJson = require('./package.json');
@@ -14,9 +14,9 @@ module.exports = {
   mode: 'development',
   target: 'electron-main',
   entry: {
-    'main/main': './src/main/main.js',
-    'editor/index': './src/editor/index.js',
-    'preview/index': './src/preview/index.js',
+    'main/main': ['@babel/polyfill', './src/main/main.js'],
+    'editor/index': ['@babel/polyfill', './src/editor/index.js'],
+    'preview/index': ['@babel/polyfill', './src/preview/index.js'],
   },
   output: {
     path: path.resolve(__dirname, 'build'),
@@ -35,24 +35,55 @@ module.exports = {
     new HtmlWebpackPlugin({
       filename: 'editor/index.html',
       chunks: ['editor/index'],
-      template: 'src/editor.hbs',
+      template: 'src/editor/editor.hbs',
       description: 'editor window',
     }),
     new HtmlWebpackPlugin({
       filename: 'preview/index.html',
       chunks: ['preview/index'],
-      template: 'src/preview.hbs',
+      template: 'src/preview/preview.hbs',
       description: 'preview window',
+    }),
+    new MonacoWebpackPlugin({
+      // available options are documented at https://github.com/Microsoft/monaco-editor-webpack-plugin#options
+      languages: ['markdown']
     }),
     new GenerateJsonWebpackPlugin('package.json', {
       name: 'add-a-chapter',
-      author: 'gehlhausen-heath',
-      main: 'main/main.js',
-      description: packageJson.description,
-      version: packageJson.version,
-      build: {
-        appId: 'com.heathgehlhausen.addachapter'
+      author: {
+        name: 'Heath Gehlhausen',
+        email: 'heath.gehlhausen@gmail.com',
       },
+      main: 'main/main.js',
+      homepage: 'https://github.com/hgehlhausen/addachapter',
+      license: 'SEE LICENSE IN LICENSE',
+      description: 'Add-A-Chapter allows simple creation of good looking documents for Pen-and-paper RPGs',
+      version: packageJson.version,
+      scripts: {
+        "dist": "electron-builder",
+      },
+      build: {
+        appId: 'com.hgehlhausen.addachapter',
+        productName: 'AddAChapter',
+        linux: {
+          target: [
+            'AppImage',
+            'deb'
+          ]
+        },
+        win: {
+          target: 'nsis',
+          icon: ''
+        },
+        nsis: {
+          license: 'LICENSE',
+          runAfterFinish: true,
+        }
+      },
+      devDependencies: {
+        electron: 'latest',
+        'electron-builder': 'latest',
+      }
     }),
   ],
   module: {
@@ -61,16 +92,16 @@ module.exports = {
       { test: /\.css$/, use: [MiniCssExtractPlugin.loader, 'css-loader'] },
       { test: /\.scss$/, use: [MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader'] },
       { test: /\.hbs$/, use: ['handlebars-loader'] },
-      // {
-      //   test: /\.js$/, exclude: /node_modules/,
-      //   use: {
-      //     loader: 'babel-loader',
-      //     options: {
-      //       presets: ['@babel/env'],
-      //       plugins: ['transform-class-properties']
-      //     }
-      //   }
-      // },
+      {
+        test: /\.(js|jsx)$/,
+        exclude: /node_modules/,
+        use: {
+          loader: 'babel-loader',
+          options: {
+            presets: ['@babel/env', '@babel/preset-react'],
+          }
+        }
+      },
     ],
   }
 };
