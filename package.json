@@ -29,6 +29,7 @@
     "@fortawesome/fontawesome-svg-core": "^1.2.22",
     "@fortawesome/free-solid-svg-icons": "^5.10.2",
     "@fortawesome/react-fontawesome": "^0.1.4",
+    "eslint-utils": "^1.4.2",
     "marked": "^0.7.0",
     "monaco": "^1.201704190613.0",
     "react": "^16.9.0",
