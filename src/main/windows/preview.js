@@ -1,26 +1,23 @@
 
-import { BrowserWindow, ipcMain } from 'electron';
-import { exportFileDialog } from './files/dialog';
+import { BrowserWindow, ipcMain as ipc } from 'electron';
 import path from 'path';
 import url from 'url';
 
-// import view from '../preview/preview.html';
-import appIcon from '../common/icon.png';
+import Window from './window';
+import { exportFileDialog } from '../files/dialog';
 
-export default class PreviewWindow {
-  constructor(ipc = ipcMain) {
-    this.ipc = ipc;
-    this.title = 'Preview';
-    this.webPreferences = {
-      nodeIntegration: true,
-    };
-    this.width = 850;
-    this.height = 900;
-    this.icon = appIcon;
-    this.modal = true;
-    this.attach(this.ipc);
+export default class PreviewWindow extends Window {
+  constructor(parent) {
+    super(['preview', 'index.html'], {
+      title: 'Preview',
+      modal: true,
+      width: 850,
+      height: 900,
+      parent,
+    });
+    this.attach();
   }
-  attach(ipc) {
+  attach() {
     ipc.on('preview:ready', ({ sender }) => {
       sender.send('preview:rendered', global.data.html);
     });
@@ -31,7 +28,7 @@ export default class PreviewWindow {
         if (e) { console.log(e); return; }
 
         try {
-          const errCode = await exportFileDialog(data);
+          await exportFileDialog(data);
         } catch (err) {
           console.log(err);
         }
