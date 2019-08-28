@@ -3,10 +3,10 @@ import {
   Menu,
 } from 'electron';
 
-import editorMenu from './menu';
-import EditorWindow from './editor';
+import windowsIcon from '../common/icon.ico';
 
-// global.license = LICENSE;
+import editorMenu from './menu';
+import EditorWindow from './windows/editor';
 
 global.windows = new Proxy({}, {
   set(target, prop, value) {
@@ -24,9 +24,6 @@ global.data = new Proxy({
   html: '',
 }, {
     set(target, prop, value) {
-      if (prop === 'raw' && target[prop] !== value) {
-        global.windows.editor.webContents.send('edit:import', value);
-      }
       return Reflect.set(target, prop, value);
     },
     get(target, prop) {

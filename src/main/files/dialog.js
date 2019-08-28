@@ -1,5 +1,5 @@
 import path from 'path';
-import { dialog, shell } from 'electron';
+import { dialog, shell, BrowserWindow } from 'electron';
 
 import { defaultPath } from '../../common/util';
 import { mkdir, readFile, writeFile } from './async';
@@ -15,11 +15,12 @@ export async function createDefaultIfNotExists() {
 
 export async function exportFileDialog(data) {
   await createDefaultIfNotExists();
-  const path = await dialog.showSaveDialog({
-    title: 'Export File',
-    defaultPath: defaultPath(),
-  });
   try {
+    const path = await dialog.showSaveDialog({
+      title: 'Export File',
+      defaultPath: defaultPath(),
+      browserWindow: BrowserWindow.getFocusedWindow()
+    });
     const result = await writeFile(path, data);
     shell.openItem(path);
   } catch (err) {
@@ -28,26 +29,31 @@ export async function exportFileDialog(data) {
 }
 
 export async function importFileDialog(title, filters, encoding = null) {
-  const [fullPath] = await dialog.showOpenDialog({
-    title,
-    defaultPath: defaultPath(),
-    browserWindow: global.windows.editor,
-    filters,
-  });
-  const data = await readFile(fullPath, encoding);
-  return {
-    fullPath,
-    ...path.parse(fullPath),
-    data,
-  };
+  try {
+    const [fullPath] = await dialog.showOpenDialog({
+      title,
+      defaultPath: defaultPath(),
+      filters,
+      browserWindow: BrowserWindow.getFocusedWindow()
+    });
+    const data = await readFile(fullPath, encoding);
+    return {
+      fullPath,
+      ...path.parse(fullPath),
+      data,
+    };
+  } catch (err) {
+    console.log(err);
+  }
 }
 
 export async function saveFileDialog(data, title = 'Save As', defPath) {
-  const path = await dialog.showSaveDialog({
-    title,
-    defaultPath: defaultPath(),
-  });
   try {
+    const path = await dialog.showSaveDialog({
+      title,
+      defaultPath: defaultPath(),
+      browserWindow: BrowserWindow.getFocusedWindow()
+    });
     await writeFile(path, data);
     return 0;
   } catch (err) {

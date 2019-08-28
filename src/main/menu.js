@@ -1,4 +1,4 @@
-import { app, dialog } from 'electron';
+import { app, dialog, BrowserWindow, } from 'electron';
 import url from 'url';
 import path from 'path';
 
@@ -11,7 +11,7 @@ export default [
     label: 'File',
     submenu: [
       {
-        label: 'Open Markdown File',
+        label: 'Open Chapter File',
         accelerator: `CmdOrCtrl+O`,
         async click() {
           try {
@@ -23,10 +23,10 @@ export default [
             global.preferredDir = dir;
             global.currentFileName = name;
             global.quickSavePath = fullPath;
+            BrowserWindow.getFocusedWindow().send('edit:import', data);
           } catch (err) {
             console.log('File Open Error', err);
           }
-          // @todo add filename for editor directory
         }
       },
       {
@@ -36,6 +36,7 @@ export default [
           try {
             if (global.quickSavePath) {
               await writeFile(global.quickSavePath, global.data.raw);
+              console.log('quick saved!');
               return;
             }
             await saveFileDialog(global.data.raw, global.preferredDir);
@@ -72,6 +73,7 @@ export default [
           const [pathname] = dialog.showOpenDialog({
             title: 'Import Relative File',
             defaultPath: global.preferredDir || defaultPath(),
+            browserWindow: BrowserWindow.getFocusedWindow(),
             filters: [
               { name: 'Portal Network Graphic', extensions: ['png', 'PNG'] },
               { name: 'JPeg', extensions: ['jpg', 'JPG', 'jpeg', 'JPEG'] },

@@ -5,8 +5,6 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const GenerateJsonWebpackPlugin = require('generate-json-webpack-plugin');
-const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
-// const PackageJsonPlugin = require('./webpack-plugins/package-json');
 
 const packageJson = require('./package.json');
 
@@ -21,7 +19,6 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, 'build'),
     filename: '[name].js',
-    // publicPath: '',
   },
   node: {
     __dirname: false,
@@ -44,10 +41,6 @@ module.exports = {
       template: 'src/preview/preview.hbs',
       description: 'preview window',
     }),
-    new MonacoWebpackPlugin({
-      // available options are documented at https://github.com/Microsoft/monaco-editor-webpack-plugin#options
-      languages: ['markdown']
-    }),
     new GenerateJsonWebpackPlugin('package.json', {
       name: 'add-a-chapter',
       author: {
@@ -60,25 +53,22 @@ module.exports = {
       description: 'Add-A-Chapter allows simple creation of good looking documents for Pen-and-paper RPGs',
       version: packageJson.version,
       scripts: {
-        "dist": "electron-builder",
+        "dist": "electron-builder -wl",
       },
       build: {
         appId: 'com.hgehlhausen.addachapter',
         productName: 'AddAChapter',
         linux: {
+          category: 'Utility',
           target: [
             'AppImage',
             'deb'
           ]
         },
         win: {
-          target: 'nsis',
-          icon: ''
+          target: 'portable',
+          icon: './icon.ico',
         },
-        nsis: {
-          license: 'LICENSE',
-          runAfterFinish: true,
-        }
       },
       devDependencies: {
         electron: 'latest',
@@ -88,7 +78,25 @@ module.exports = {
   ],
   module: {
     rules: [
-      { test: /\.(png|jpg|jpeg)$/i, use: ['url-loader'] },
+      {
+        test: /\.(png|jpg|jpeg)$/i,
+        use: [{
+          loader: 'url-loader', options: {
+            limit: 16284,
+            name: '[name].[ext]'
+          }
+        }]
+      },
+      {
+        test: /icon\./i,
+        use: [{
+          loader: 'url-loader',
+          options: {
+            name: '[name].[ext]',
+            limit: 0,
+          }
+        }]
+      },
       { test: /\.css$/, use: [MiniCssExtractPlugin.loader, 'css-loader'] },
       { test: /\.scss$/, use: [MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader'] },
       { test: /\.hbs$/, use: ['handlebars-loader'] },
@@ -99,6 +107,7 @@ module.exports = {
           loader: 'babel-loader',
           options: {
             presets: ['@babel/env', '@babel/preset-react'],
+            plugins: ['transform-class-properties'],
           }
         }
       },
