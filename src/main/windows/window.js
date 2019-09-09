@@ -41,7 +41,7 @@ export default class Window {
       });
       this.window.loadURL(view);
     } catch (err) {
-      this.console.log('Error', err);
+      console.log('Error', err);
     }
     return this.window;
   }

@@ -24,7 +24,12 @@ module.exports = {
     __dirname: false,
   },
   plugins: [
-    new TerserPlugin(),
+    new TerserPlugin({
+      sourceMap: true,
+      terserOptions: {
+        drop_console: true,
+      },
+    }),
     new MiniCssExtractPlugin({
       filename: '[name].css'
     }),

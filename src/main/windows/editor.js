@@ -1,4 +1,6 @@
-import { ipcMain as ipc, screen } from 'electron';
+import { ipcMain as ipc, screen, BrowserWindow, Tray } from 'electron';
+import path from 'path';
+import url from 'url';
 import marked from '../parser/classed-markdown';
 import Window from './window';
 
@@ -11,9 +13,9 @@ export default class EditorWindow extends Window {
       width: Math.max(screen.width, 600),
       height: Math.max(screen.height, 850),
     });
-    this.attach(ipc);
+    this.attach();
   }
-  attach(ipc) {
+  attach() {
     ipc.on('edit:update', ({ sender }, value) => {
       global.data.raw = value;
     });
@@ -24,10 +26,35 @@ export default class EditorWindow extends Window {
     });
   }
   open() {
-    const window = super.open();
-    window.on('resize', ({ sender }) => {
+    const {
+      icon,
+      webPreferences,
+      viewPathArray,
+      ...overrides
+    } = this;
+
+    const iconPath = path.resolve(path.join(__dirname, '..', icon));
+    // const iconFile = new Tray(iconPath);
+
+    this.window = new BrowserWindow({
+      show: false,
+      webPreferences,
+      // icon: iconPath,
+      ...overrides
+    });
+    this.window.once('ready-to-show', () => {
+      this.window.show();
+    });
+    const view = url.format({
+      protocol: 'file:',
+      slashes: true,
+      pathname: path.resolve(path.join(__dirname, '..', ...viewPathArray)),
+    });
+    this.window.loadURL(view);
+
+    this.window.on('resize', ({ sender }) => {
       sender.send('edit:resize');
     });
-    return window;
+    return this.window;
   }
 }
