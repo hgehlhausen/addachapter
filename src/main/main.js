@@ -10,7 +10,7 @@ import EditorWindow from './windows/editor';
 
 global.windows = new Proxy({}, {
   set(target, prop, value) {
-    if ((!Reflect.has(target, prop) || Relect.get(target, prop) !== value) && value) {
+    if ((!Reflect.has(target, prop) || (Relect.get(target, prop) !== value) && value)) {
       value.on('closed', () => {
         delete target[prop];
       });

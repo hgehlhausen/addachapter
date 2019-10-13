@@ -33,13 +33,9 @@ export default class EditorWindow extends Window {
       ...overrides
     } = this;
 
-    const iconPath = path.resolve(path.join(__dirname, '..', icon));
-    // const iconFile = new Tray(iconPath);
-
     this.window = new BrowserWindow({
       show: false,
       webPreferences,
-      // icon: iconPath,
       ...overrides
     });
     this.window.once('ready-to-show', () => {

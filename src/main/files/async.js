@@ -1,4 +1,4 @@
-import fs  from 'fs';
+import fs from 'fs';
 import os from 'os';
 
 export const readFile = (path, encoding = 'utf8') => {
@@ -21,12 +21,12 @@ export const writeFile = (path, data, encoding = 'utf8') => {
 
 export const mkdir = (dir, mode = '0o777') => {
   const options = { recursive: true };
-  if(!os.platform() === 'win32') {
+  if (!os.platform() === 'win32') {
     options.mode = mode;
   }
   return new Promise((res, rej) => {
     fs.mkdir(dir, options, (err) => {
-      if(err) { rej(err); };
+      if (err) { rej(err); };
       res(0);
     })
   });
